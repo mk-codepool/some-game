@@ -1,0 +1,90 @@
+main {
+  height: 100vh;
+  width: 100vw;
+  color: rgb(231, 231, 231);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: grid;
+  grid-template-rows: 54px 1fr 50px;
+  z-index: 2;
+  position: absolute;
+}
+
+.content-container {
+  display: grid;
+  grid-row: 2 / 3;
+  padding: 30px;
+
+  > div {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+}
+
+::ng-deep router-outlet {
+  display: none;
+}
+
+.background-container {
+  background-color: #383838;
+  user-select: none;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1;
+
+  .background  {
+    $particleSize: 40vmin;
+    $animationDuration: 200s;
+    $amount: 20;
+  
+    span {
+      width: $particleSize;
+      height: $particleSize;
+      border-radius: $particleSize;
+      backface-visibility: hidden;
+      position: absolute;
+      animation-name: move;
+      animation-duration: $animationDuration;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      $colors: (
+        #573c8786,
+        #e45a8375,
+        #ffacac85,
+        #3c876e86,
+        #dbe45a75,
+        #f0ffac85
+      );
+      @for $i from 1 through $amount {
+        &:nth-child(#{$i}) {
+          color: nth($colors, random(length($colors)));
+          top: random(100) * 1%;
+          left: random(100) * 1%;
+          animation-duration: (random($animationDuration * 10) / 10) * 1s + 10s;
+          animation-delay: random(($animationDuration + 10s) * 10) / 10 * -1s;
+          transform-origin: (random(50) - 25) * 1vw (random(50) - 25) * 1vh;
+          $blurRadius: (random() + 0.5) * $particleSize * 0.5;
+          $x: if(random() > 0.5, -1, 1);
+          box-shadow: ($particleSize * 2 * $x) 0 $blurRadius currentColor;
+        }
+      }
+    }
+    
+    @keyframes move {
+      100% {
+        transform: translate3d(0, 0, 1px) rotate(360deg);
+      }
+    }
+  }
+}
+
+::ng-deep a {
+  color: rgb(231, 231, 231);
+
+  &:visited {
+    color: rgb(231, 231, 231);
+  }
+}
