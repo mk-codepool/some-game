@@ -33,7 +33,7 @@
               "src/styles.scss",
               "node_modules/font-awesome/css/font-awesome.min.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/phaser/dist/phaser.min.js"]
           },
           "configurations": {
             "production": {
