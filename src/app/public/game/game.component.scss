@@ -1,0 +1,15 @@
+.game {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 20% 80%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.game-panel {
+  background-color: rgba(0, 0, 0, 0.39);
+}
+
+.game-canvas {
+  background-color: rgba(104, 104, 104, 0.568);
+}

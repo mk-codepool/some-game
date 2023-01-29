@@ -22,6 +22,7 @@
     "@ngrx/store": "^15.2.1",
     "@ngrx/store-devtools": "^15.2.1",
     "font-awesome": "^4.7.0",
+    "phaser": "^3.55.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
