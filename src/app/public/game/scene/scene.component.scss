@@ -1,6 +1,10 @@
-.canvas {
+:host {
   height: 100%;
+  max-width: 100%;
   overflow: hidden;
-  padding: 0;
-  margin: 0;
+  display: block;
+}
+
+.canvas-container {
+  height: calc(100% - 1px);
 }
