@@ -1,0 +1,21 @@
+.game-controller {
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  $controller-btn-size: 40px;
+
+  .game-controller__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, $controller-btn-size);
+    grid-gap: 2px;
+    width: 100%;
+  }
+
+  .game-controller__button {
+    width: $controller-btn-size;
+    height: $controller-btn-size;
+    border: none;
+    background-color: rgb(0, 105, 74);
+    color: #fff;
+  }
+}

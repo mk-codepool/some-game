@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { GameComponent } from './game.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SceneComponent } from './scene/scene.component';
+import { GameControllerComponent } from './game-controller/game-controller.component';
 
 const routes: Routes = [
   { path: '', component: GameComponent, data: { preload: true } },
@@ -15,7 +16,8 @@ const routes: Routes = [
   ],
   declarations: [
     GameComponent,
-    SceneComponent
+    SceneComponent,
+    GameControllerComponent
   ]
 })
 export class GameModule { }

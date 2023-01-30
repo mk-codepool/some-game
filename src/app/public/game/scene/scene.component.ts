@@ -19,10 +19,10 @@ export class SceneComponent implements AfterViewInit {
 
   private getGameConfig(): Phaser.Types.Core.GameConfig {
     const element = this.gameContainer.nativeElement;
-    console.log(element.offsetHeight, element.offsetWidth)
+    
     return {
       type: Phaser.AUTO,
-      height: element.offsetHeight - 2,
+      height: element.offsetHeight - 1,
       width: element.offsetWidth,
       scene: [ MainScene ],
       parent: 'gameContainer',
