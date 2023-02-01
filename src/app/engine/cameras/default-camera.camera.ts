@@ -1,11 +1,6 @@
 import * as THREE from "three";
 import { Mesh, OrthographicCamera } from "three";
-
-interface Axes {
-  x: number,
-  y: number,
-  z: number
-}
+import { Axes } from "../interfaces";
 
 export class DefaultCamera extends OrthographicCamera {
   private _lookAtVector: Axes = { x: 0, y: 0, z: 0 };
@@ -21,7 +16,6 @@ export class DefaultCamera extends OrthographicCamera {
       1000
     );
     this.position.set(150, 125, 150);
-    this.rotation.set(0, 0, 90);
     this.lookAt(new THREE.Vector3(0, 0, 0));
   }
 
@@ -72,9 +66,5 @@ export class DefaultCamera extends OrthographicCamera {
     }
 
     this.lookAt(new THREE.Vector3(this._lookAtVector.x, this._lookAtVector.y, this._lookAtVector.z));
-  }
-
-  private getLookAt() {
-    return this.getWorldDirection(new THREE.Vector3(0, 0, 0));
   }
 }

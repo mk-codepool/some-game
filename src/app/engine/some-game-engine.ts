@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import { EngineCameras } from "./cameras";
 import { DefaultCamera } from "./cameras/default-camera.camera";
-import { standardMaterial } from "./materials/standard.material";
+import { EngineMaterials } from "./materials";
+import { EngineShapes } from "./shapes";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -12,14 +12,10 @@ export interface GameConfig {
 
 export class SomeGameEngine {
   private _animate: FrameRequestCallback = this.animate.bind(this);
-  private _raycaster: THREE.Raycaster = new THREE.Raycaster();
   private _scene: THREE.Scene = new THREE.Scene();
   private _camera!: DefaultCamera;
   private _canvas!: HTMLElement;
   private _renderer!: THREE.WebGLRenderer;
-  private _cube!: THREE.Mesh;
-  private readonly _aboveSurface = new THREE.Vector3(0, 1, 0);
-  private readonly _surfaceMinimumDistance = 0.5;
 
   constructor(_gameConfig: GameConfig) {
     this._canvas = _gameConfig.canvasElement;
@@ -33,17 +29,11 @@ export class SomeGameEngine {
 
   public setSceneObjects(): void {
     // Cube
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    this._cube = new THREE.Mesh(cubeGeometry, standardMaterial);
-    this._cube.position.y = 0.5;
-    this._cube.castShadow = true;
+    const cube = EngineShapes.BasicShapes.getBasicBox({ axes: { x: 0, y: 0.5, z: 0 }});
+    // Sphere
+    const sphere = EngineShapes.BasicShapes.getBasicSphere({ axes: { x: 2, y: 2, z: 0 }});
     // Flat surface
-    const planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
-    const plane = new THREE.Mesh(planeGeometry, standardMaterial);
-    plane.receiveShadow = true;
-    plane.rotation.x = -0.5 * Math.PI;
-    plane.position.y = 0;
-    plane.name = 'surface';
+    const plane = EngineShapes.BasicShapes.getBasicSurface();
     // direct Light
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.castShadow = true;
@@ -65,7 +55,8 @@ export class SomeGameEngine {
     const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
 
     this.addItemsToScene([
-      this._cube,
+      cube,
+      sphere,
       plane,
       directionalLight,
       light,
