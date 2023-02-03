@@ -1,18 +1,27 @@
 <div class="home">
   <h1 class="title">Welcome to some game web application</h1>
   <p class="description">
-    Something about me producing a game in ThreeJS, while had never did that, but having over 10 years of experience in industry mainly doing web apps.
+    Something about me producing a game in ThreeJS, while had never did that, but having over 10 years of experience in industry mainly doing frontend web apps for corporations. The whole app is using Angular and NgRx infrastructure, and the backed is using NestJS in NodeJS environment with MongoDB as database. The reason of the app is to have a fun and to learn while developing the whole infrastructure. Whole process is supported by intelligent documentation as ChatGPT.
   </p>
   
   <div class="logos">
-    <a href="https://angular.io/" target="_blank">
+    <a class="angular anim-sparks" (click)="handleExternalLibClicked('angular')" [ngClass]="{ 'animate': animateClass === 'angular' }" title="angular">
       <img src="assets/angular_whiteTransparent.svg" height="100">
     </a>
-    <a href="https://phaser.io/" target="_blank">
-      <img src="assets/Phaser-Logo-Small.png" height="100">
+    <a class="ngrx anim-sparks" (click)="handleExternalLibClicked('ngrx')" [ngClass]="{ 'animate': animateClass === 'ngrx' }">
+      <img src="assets/ngrx.svg" height="100">
     </a>
-    <a href="https://openai.com/" target="_blank">
+    <a class="threejs anim-sparks" (click)="handleExternalLibClicked('threejs')" [ngClass]="{ 'animate': animateClass === 'threejs' }" title="threejs">
+      <img src="assets/threejs-logo.png" height="100">
+    </a>
+    <a class="chatgpt anim-sparks" (click)="handleExternalLibClicked('chatgpt')" [ngClass]="{ 'animate': animateClass === 'chatgpt' }" title="chatgpt">
       <img src="assets/chatGpt.png" height="100">
+    </a>
+    <a class="nestjs anim-sparks" (click)="handleExternalLibClicked('nestjs')" [ngClass]="{ 'animate': animateClass === 'nestjs' }" title="nestjs">
+      <img src="assets/nestjs-icon.svg" height="100">
+    </a>
+    <a class="mongodb anim-sparks" (click)="handleExternalLibClicked('mongodb')" [ngClass]="{ 'animate': animateClass === 'mongodb' }" title="mongodb">
+      <img src="assets/mongodb-ar21.svg" height="100">
     </a>
   </div>
 </div>

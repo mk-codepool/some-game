@@ -1,4 +1,4 @@
-import { BasicShapes } from "./basic-shapes.geometry";
+import { BasicShapes } from "./basic-shapes.shape";
 
 export const EngineShapes = {
   BasicShapes

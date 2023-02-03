@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { EngineCameras } from "./cameras";
 import { DefaultCamera } from "./cameras/default-camera.camera";
+import { EngineLights } from "./lights";
 import { EngineMaterials } from "./materials";
 import { EngineShapes } from "./shapes";
 
@@ -35,15 +36,9 @@ export class SomeGameEngine {
     // Flat surface
     const plane = EngineShapes.BasicShapes.getBasicSurface();
     // direct Light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.radius = 8;
-    directionalLight.position.set(1, 1, 1);
+    const directionalLight = EngineLights.BasicLights.getDirectionalLight({ axes: { x: 10, y: 10, z: 10 }});
     // light
-    const light = new THREE.PointLight(0xffffff, 0.5);
-    light.castShadow = true;
-    light.shadow.radius = 8;
-    light.position.set(3, 3, 2);
+    const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 10, z: 10 }});
     // Sky sphere
     const skyGeometry = new THREE.SphereGeometry(100, 100, 100);
     const skyMaterial = new THREE.MeshBasicMaterial({

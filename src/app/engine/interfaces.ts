@@ -3,3 +3,7 @@ export interface Axes {
   y: number,
   z: number
 }
+
+export interface BasicShapeConfig {
+  axes: Axes
+}

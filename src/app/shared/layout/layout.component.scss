@@ -1,3 +1,26 @@
+$neon-colors: (
+  #ff6ec7, 
+  #ffa755, 
+  #80ffbb, 
+  #6dffd7, 
+  #b3ff6b, 
+  #ffff80, 
+  #ff7a7a, 
+  #ffb3b3, 
+  #b3b3ff, 
+  #7affff, 
+  #d3ff6b, 
+  #ff6b6b, 
+  #b3ffd3, 
+  #6bffb3, 
+  #d3b3ff, 
+  #7affb3, 
+  #ffb3d3, 
+  #b3d3ff, 
+  #d3b3b3,
+  #b3d3b3
+);
+
 main {
   height: 100vh;
   width: 100vw;
@@ -53,17 +76,9 @@ main {
       animation-duration: $animationDuration;
       animation-timing-function: linear;
       animation-iteration-count: infinite;
-      $colors: (
-        #573c8786,
-        #e45a8375,
-        #ffacac85,
-        #3c876e86,
-        #dbe45a75,
-        #f0ffac85
-      );
       @for $i from 1 through $amount {
         &:nth-child(#{$i}) {
-          color: nth($colors, random(length($colors)));
+          color: nth($neon-colors, random(length($neon-colors)));
           top: random(100) * 1%;
           left: random(100) * 1%;
           animation-duration: (calc(random($animationDuration * 10) / 10) * 1s + 10s);

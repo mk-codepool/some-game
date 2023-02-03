@@ -27,6 +27,63 @@
     
     a {
       margin-right: 40px;
+      position: relative;
+
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 49.8%;
+        left: 49.8%;
+        width: .2%;
+        height: .2%;
+        background: rgba(255, 255, 255, 0.534);
+        border-radius: 50%;
+        box-shadow: 0 0 40px 25px white;
+        opacity: 0.5;
+      }
+
+      &.angular {
+        &::after {
+          box-shadow: 0 0 30px 15px #fff, 
+          0 0 40px 45px #B52E31;
+        }
+      }
+
+      &.ngrx {
+        &::after {
+          box-shadow: 0 0 30px 15px #fff, 
+          0 0 40px 45px #c40093;
+        }
+      }
+
+      &.threejs {
+        &::after {
+          box-shadow: 0 0 30px 15px #fff, 
+          0 0 40px 45px #f0ffac85;
+        }
+      }
+
+      &.chatgpt {
+        &::after {
+          box-shadow: 0 0 30px 15px #fff, 
+          0 0 40px 45px #3c876e86;
+        }
+      }
+
+      &.nestjs {
+        &::after {
+          box-shadow: 0 0 30px 15px #fff, 
+          0 0 40px 45px #ea2845;
+        }
+      }
+
+      &.mongodb {
+        &::after {
+          box-shadow: 0 0 50px 25px #fff, 
+          0 0 40px 45px #6cac48;
+        }
+      }
 
       &:last-child {
         margin-right: 0;

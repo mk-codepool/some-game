@@ -1,19 +1,10 @@
 import * as THREE from "three";
-import { Axes } from "../interfaces";
+import { AXES } from "../basics/basic-scene-object.basic";
+import { BasicShapeConfig } from "../interfaces";
 import { EngineMaterials } from "../materials";
 
-interface BasicShapeConfig {
-  axes: Axes
-}
-
-const axes: Axes = {
-  x: 0,
-  y: 0,
-  z: 0
-}
-
 export class BasicShapes {
-  public static getBasicBox(basicShapeConfig: BasicShapeConfig = { axes }): THREE.Mesh {
+  public static getBasicBox(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
     const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cube = new THREE.Mesh(cubeGeometry, EngineMaterials.standardMaterial);
 
@@ -24,7 +15,7 @@ export class BasicShapes {
     return cube;
   }
 
-  public static getBasicSphere(basicShapeConfig: BasicShapeConfig = { axes }): THREE.Mesh {
+  public static getBasicSphere(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 16);
     const sphere = new THREE.Mesh(sphereGeometry, EngineMaterials.standardMaterial);
 
@@ -35,7 +26,7 @@ export class BasicShapes {
     return sphere;
   }
 
-  public static getBasicSurface(basicShapeConfig: BasicShapeConfig = { axes }): THREE.Mesh {
+  public static getBasicSurface(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
     const planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
     const plane = new THREE.Mesh(planeGeometry, EngineMaterials.standardMaterial);
     plane.receiveShadow = true;
