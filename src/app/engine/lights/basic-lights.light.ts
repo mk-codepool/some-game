@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { AXES, BasicSceneObject } from "../basics/basic-scene-object.basic";
-import { BasicShapeConfig } from "../interfaces";
+import { BasicShapeConfig } from "../interfaces.engine";
 
 export class BasicLights extends BasicSceneObject {
   public static getDirectionalLight(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.DirectionalLight {
@@ -19,5 +19,12 @@ export class BasicLights extends BasicSceneObject {
     light.position.set(basicShapeConfig.axes.x, basicShapeConfig.axes.y, basicShapeConfig.axes.z);
 
     return light;
+  }
+
+  public static getAmbientLight(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.AmbientLight {
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    ambientLight.position.set(basicShapeConfig.axes.x, basicShapeConfig.axes.y, basicShapeConfig.axes.z);
+
+    return ambientLight;
   }
 }

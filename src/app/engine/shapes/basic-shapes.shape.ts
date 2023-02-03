@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { AXES } from "../basics/basic-scene-object.basic";
-import { BasicShapeConfig } from "../interfaces";
+import { BasicShapeConfig } from "../interfaces.engine";
 import { EngineMaterials } from "../materials";
 
 export class BasicShapes {

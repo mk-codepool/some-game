@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Mesh, OrthographicCamera } from "three";
-import { Axes } from "../interfaces";
+import { Axes } from "../interfaces.engine";
 
 export class DefaultCamera extends OrthographicCamera {
   private _lookAtVector: Axes = { x: 0, y: 0, z: 0 };
@@ -17,6 +17,9 @@ export class DefaultCamera extends OrthographicCamera {
     );
     this.position.set(150, 125, 150);
     this.lookAt(new THREE.Vector3(0, 0, 0));
+    
+    this.addKeyMoveController();
+    this.addWheelController();
   }
 
   public addKeyMoveController(): void {

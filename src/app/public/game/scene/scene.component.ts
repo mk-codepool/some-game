@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { SomeGameEngine } from 'src/app/engine/some-game-engine';
+import { SomeGameEngine } from 'src/app/engine';
 
 @Component({
   selector: 'app-scene',

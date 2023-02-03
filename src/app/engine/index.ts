@@ -1,8 +1,10 @@
 import * as THREE from "three";
+import { EngineBasics } from "./basics";
+import { BasicSceneObject } from "./basics/basic-scene-object.basic";
 import { EngineCameras } from "./cameras";
 import { DefaultCamera } from "./cameras/default-camera.camera";
 import { EngineLights } from "./lights";
-import { EngineMaterials } from "./materials";
+import { EngineRenderer } from "./renderer.engine";
 import { EngineShapes } from "./shapes";
 
 export interface GameConfig {
@@ -13,13 +15,11 @@ export interface GameConfig {
 
 export class SomeGameEngine {
   private _animate: FrameRequestCallback = this.animate.bind(this);
-  private _scene: THREE.Scene = new THREE.Scene();
+  private _scene: BasicSceneObject = new EngineBasics.BasicSceneObject();
   private _camera!: DefaultCamera;
-  private _canvas!: HTMLElement;
   private _renderer!: THREE.WebGLRenderer;
 
   constructor(_gameConfig: GameConfig) {
-    this._canvas = _gameConfig.canvasElement;
     this.setRenderer(_gameConfig);
     this.setCamera(_gameConfig);
   }
@@ -40,16 +40,11 @@ export class SomeGameEngine {
     // light
     const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 10, z: 10 }});
     // Sky sphere
-    const skyGeometry = new THREE.SphereGeometry(100, 100, 100);
-    const skyMaterial = new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load('../../assets/blue-sky-texture.jpg'),
-      side: THREE.BackSide,
-    });
-    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+    const sky = new EngineShapes.DomeShape();
     // Ambient light
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    const ambientLight = EngineLights.BasicLights.getAmbientLight();
 
-    this.addItemsToScene([
+    this._scene.addItemsToScene([
       cube,
       sphere,
       plane,
@@ -67,19 +62,9 @@ export class SomeGameEngine {
 
   private setCamera(_gameConfig: GameConfig): void {
     this._camera = new EngineCameras.DefaultCamera(_gameConfig.canvasHeight, _gameConfig.canvasWidth);
-    this._camera.addKeyMoveController();
-    this._camera.addWheelController();
   }
 
   private setRenderer(_gameConfig: GameConfig): void {
-    this._renderer = new THREE.WebGLRenderer({
-      canvas: _gameConfig.canvasElement,
-    });
-    this._renderer.setSize(_gameConfig.canvasWidth, _gameConfig.canvasHeight);
-    this._renderer.shadowMap.enabled = true;
-  }
-
-  private addItemsToScene(items: any[]): void {
-    items.forEach((item) => this._scene.add(item));
+    this._renderer = new EngineRenderer(_gameConfig);
   }
 }
