@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { Mesh, OrthographicCamera } from "three";
+import { OrthographicCamera } from "three";
 import { Axes } from "../interfaces.engine";
 
 export class DefaultCamera extends OrthographicCamera {
+  private _initRotation!: THREE.Euler;
   private _lookAtVector: Axes = { x: 0, y: 0, z: 0 };
 
   constructor(height: number, width: number) {
@@ -15,11 +16,21 @@ export class DefaultCamera extends OrthographicCamera {
       1,
       1000
     );
-    this.position.set(150, 125, 150);
+    this.position.set(15, 12, 15);
     this.lookAt(new THREE.Vector3(0, 0, 0));
+    this._initRotation = this.rotation;
+    console.log('angle: ', this._initRotation)
     
     this.addKeyMoveController();
     this.addWheelController();
+  }
+
+  private get lookAtVector(): THREE.Vector3 {
+    return new THREE.Vector3(this._lookAtVector.x, this._lookAtVector.y, this._lookAtVector.z);
+  }
+
+  private set lookAtVector(axes: Axes) {
+    this._lookAtVector = axes;
   }
 
   public addKeyMoveController(): void {
@@ -62,12 +73,10 @@ export class DefaultCamera extends OrthographicCamera {
   }
 
   private onWheel(event: WheelEvent) {
-    if (event.deltaY < 0 && this.position.y < 300) {
-      this.position.y += 10;
-    } else if (event.deltaY > 0 && this.position.y > 15) {
-      this.position.y -= 10;
+    if (event.deltaY < 0 && this.position.y < 30) {
+      this.position.y += 1;
+    } else if (event.deltaY > 0 && this.position.y > 6) {
+      this.position.y -= 1;
     }
-
-    this.lookAt(new THREE.Vector3(this._lookAtVector.x, this._lookAtVector.y, this._lookAtVector.z));
   }
 }

@@ -27,7 +27,7 @@ export class BasicShapes {
   }
 
   public static getBasicSurface(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
-    const planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
+    const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 100);
     const plane = new THREE.Mesh(planeGeometry, EngineMaterials.standardMaterial);
     plane.receiveShadow = true;
     plane.rotation.x = -0.5 * Math.PI;

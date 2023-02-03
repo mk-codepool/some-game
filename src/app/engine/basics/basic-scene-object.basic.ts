@@ -8,6 +8,11 @@ export const AXES: Axes = {
 }
 
 export class BasicSceneObject extends THREE.Scene{
+  constructor() {
+    super();
+    this.fog = new THREE.Fog( 0xffffff, 20, 60);
+  }
+
   public addItemsToScene(items: any[]): void {
     items.forEach((item) => this.add(item));
   }
