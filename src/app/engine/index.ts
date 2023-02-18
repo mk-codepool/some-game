@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { EngineBasics } from "./basics";
-import { BasicSceneObject } from "./basics/basic-scene-object.basic";
+import { DefaultScene } from "./scenes/default-scene.scene";
 import { EngineCameras } from "./cameras";
 import { DefaultCamera } from "./cameras/default-camera.camera";
 import { EngineLights } from "./lights";
 import { EngineRenderer } from "./renderer.engine";
 import { EngineShapes } from "./shapes";
+import { EngineScenes } from "./scenes";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -15,10 +15,9 @@ export interface GameConfig {
 
 export class SomeGameEngine {
   private _animate: FrameRequestCallback = this.animate.bind(this);
-  private _scene: BasicSceneObject = new EngineBasics.BasicSceneObject();
+  private _scene: DefaultScene = new EngineScenes.DefaultScene();
   private _camera!: DefaultCamera;
   private _renderer!: THREE.WebGLRenderer;
-  private _animateCounter: number = 0;
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -59,14 +58,6 @@ export class SomeGameEngine {
   private animate(): void {
     requestAnimationFrame(this._animate);
     this._renderer.render(this._scene, this._camera);
-  }
-
-  private countAnimation(): void {
-    this._animateCounter += 1;
-
-    if (this._animateCounter > 60) {
-      this._animateCounter = 0;
-    }
   }
 
   private setCamera(_gameConfig: GameConfig): void {

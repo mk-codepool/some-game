@@ -78,5 +78,6 @@ export class DefaultCamera extends OrthographicCamera {
     } else if (event.deltaY > 0 && this.position.y > 6) {
       this.position.y -= 1;
     }
+    this.lookAt(this.lookAtVector);
   }
 }

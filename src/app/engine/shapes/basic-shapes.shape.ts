@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { AXES } from "../basics/basic-scene-object.basic";
+import { AXES } from "../scenes/default-scene.scene";
 import { BasicShapeConfig } from "../interfaces.engine";
 import { EngineMaterials } from "../materials";
 

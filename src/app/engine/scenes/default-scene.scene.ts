@@ -7,7 +7,7 @@ export const AXES: Axes = {
   z: 0
 }
 
-export class BasicSceneObject extends THREE.Scene{
+export class DefaultScene extends THREE.Scene{
   constructor() {
     super();
     this.fog = new THREE.Fog( 0xffffff, 20, 60);
