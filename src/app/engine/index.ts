@@ -6,6 +6,8 @@ import { EngineLights } from "./lights";
 import { EngineRenderer } from "./renderer.engine";
 import { EngineShapes } from "./shapes";
 import { EngineScenes } from "./scenes";
+import { DefaultSurface } from "./surroundings/surface.surrounding";
+import { EndingSurroundings } from "./surroundings";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -13,11 +15,16 @@ export interface GameConfig {
   canvasWidth: number;
 }
 
+export interface GameWorld {
+  surface?: DefaultSurface;
+}
+
 export class SomeGameEngine {
   private _animate: FrameRequestCallback = this.animate.bind(this);
   private _scene: DefaultScene = new EngineScenes.DefaultScene();
   private _camera!: DefaultCamera;
   private _renderer!: THREE.WebGLRenderer;
+  private _world: GameWorld = {};
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -29,12 +36,11 @@ export class SomeGameEngine {
   }
 
   public setSceneObjects(): void {
+    this._world.surface = new EndingSurroundings.DefaultSurface();
     // Cube
     const cube = EngineShapes.BasicShapes.getBasicBox({ axes: { x: 0, y: 0.5, z: 0 }});
     // Sphere
     const sphere = EngineShapes.BasicShapes.getBasicSphere({ axes: { x: 2, y: 2, z: 0 }});
-    // Flat surface
-    const plane = EngineShapes.BasicShapes.getBasicSurface();
     // direct Light
     const directionalLight = EngineLights.BasicLights.getDirectionalLight({ axes: { x: 10, y: 10, z: 10 }});
     // light
@@ -45,9 +51,9 @@ export class SomeGameEngine {
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
 
     this._scene.addItemsToScene([
+      this._world.surface.mesh,
       cube,
       sphere,
-      plane,
       directionalLight,
       light,
       sky,

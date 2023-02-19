@@ -27,12 +27,33 @@ export class BasicShapes {
   }
 
   public static getBasicSurface(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
+    // texture
+    const textureRepeatFactor = 200;
+    const textureLoader = new THREE.TextureLoader();
+    const map = textureLoader.load('../../../assets/game-engine/textures/desert-surface/color.jpg');
+    const normalMap = textureLoader.load('../../../assets/game-engine/textures/desert-surface/normals.jpg');
+    map.wrapS = THREE.RepeatWrapping;
+    map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(textureRepeatFactor, textureRepeatFactor);
+    normalMap.wrapS = THREE.RepeatWrapping;
+    normalMap.wrapT = THREE.RepeatWrapping;
+    normalMap.repeat.set(textureRepeatFactor, textureRepeatFactor);
+    // material
+    const material = new THREE.MeshStandardMaterial({
+      map,
+      normalMap,
+      normalScale: new THREE.Vector2(1, 1),
+    });
+    // geometry
     const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 100);
-    const plane = new THREE.Mesh(planeGeometry, EngineMaterials.standardMaterial);
+    planeGeometry.computeVertexNormals();
+    // mesh
+    const plane = new THREE.Mesh(planeGeometry, material);
     plane.receiveShadow = true;
     plane.rotation.x = -0.5 * Math.PI;
     plane.position.set(basicShapeConfig.axes.x, basicShapeConfig.axes.y, basicShapeConfig.axes.z);
 
+    // return
     return plane;
   }
 }
