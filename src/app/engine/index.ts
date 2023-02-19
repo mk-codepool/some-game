@@ -8,6 +8,8 @@ import { EngineShapes } from "./shapes";
 import { EngineScenes } from "./scenes";
 import { DefaultSurface } from "./surroundings/surface.surrounding";
 import { EndingSurroundings } from "./surroundings";
+import { EngineUnits } from "./units";
+import { ProbeUnit } from "./units/probe.unit";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -25,6 +27,7 @@ export class SomeGameEngine {
   private _camera!: DefaultCamera;
   private _renderer!: THREE.WebGLRenderer;
   private _world: GameWorld = {};
+  private _theProbe: ProbeUnit = new EngineUnits.ProbeUnit();
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -37,23 +40,14 @@ export class SomeGameEngine {
 
   public setSceneObjects(): void {
     this._world.surface = new EndingSurroundings.DefaultSurface();
-    // Cube
-    const cube = EngineShapes.BasicShapes.getBasicBox({ axes: { x: 0, y: 0.5, z: 0 }});
-    // Sphere
-    const sphere = EngineShapes.BasicShapes.getBasicSphere({ axes: { x: 2, y: 2, z: 0 }});
-    // direct Light
     const directionalLight = EngineLights.BasicLights.getDirectionalLight({ axes: { x: 10, y: 10, z: 10 }});
-    // light
     const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 10, z: 10 }});
-    // Sky sphere
     const sky = new EngineShapes.DomeShape();
-    // Ambient light
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
 
     this._scene.addItemsToScene([
+      this._theProbe.mesh,
       this._world.surface.mesh,
-      cube,
-      sphere,
       directionalLight,
       light,
       sky,
@@ -63,6 +57,7 @@ export class SomeGameEngine {
 
   private animate(): void {
     requestAnimationFrame(this._animate);
+    this._theProbe.update();
     this._renderer.render(this._scene, this._camera);
   }
 

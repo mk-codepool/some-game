@@ -42,7 +42,7 @@ export class BasicShapes {
     const material = new THREE.MeshStandardMaterial({
       map,
       normalMap,
-      normalScale: new THREE.Vector2(1, 1),
+      normalScale: new THREE.Vector2(2, 2),
     });
     // geometry
     const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 100);
