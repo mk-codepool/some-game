@@ -1,65 +1,125 @@
-import * as THREE from "three";
-import * as TWEEN from '@tweenjs/tween.js'
+import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 
+// Create unit tests for this class
 export class ProbeUnit {
   public mesh!: THREE.Mesh;
-  private speed: number = 0.1;
-  public moveTween: TWEEN.Tween<THREE.Vector3> | null = null;
+  public moveTween:
+    | TWEEN.Tween<THREE.Euler>
+    | TWEEN.Tween<THREE.Vector3>
+    | null = null;
+  private isAnimating: boolean = false;
+
 
   constructor() {
     this.setMesh();
   }
-  
+
   public update() {
     TWEEN.update();
   }
 
   private setMesh(): void {
-    // create a sphere geometry with the given radius
-    const geometry = new THREE.SphereGeometry(.3, 32, 32);
-
-    // create a standard material with the given color
+    const geometry = this.getProbeGeometry();
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    // add axes helper
+    const axesHelper = new THREE.AxesHelper(5);
 
-    // create a mesh using the geometry and material
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.position.set(0, 2, 0);
+    this.mesh.rotateX(Math.PI / -2);
+    this.mesh.receiveShadow = true;
     this.mesh.castShadow = true;
+    this.mesh.add(axesHelper);
 
-    // initialize the movement speed and key state variables
-    this.speed = 1;
+    this.bindKeys();
+  }
 
-    // add an event listener to track keyboard key state
+  // Method that returns only the probe geometry of cone shape
+  public getProbeGeometry(): THREE.ConeGeometry {
+    const coneGeometry = new THREE.ConeGeometry(0.1, 0.5, 32);
+
+    return coneGeometry;
+  }
+
+  // Method that smooth move the probe straight forward
+  public moveForward(): void {
+    if (this.isAnimating) {
+      return;
+    }
+    
+    const distance = .001; // distance to move the object
+    const duration = 1000; // duration of the animation in milliseconds
+    const startPosition = this.mesh.position.clone();
+    const endPosition = this.mesh.position
+      .clone()
+      .add(new THREE.Vector3(0, distance, 0));
+
+    this.moveTween = new TWEEN.Tween(startPosition)
+      .to(endPosition, duration)
+      .onUpdate(() => {
+        const position = this.mesh.position.clone();
+        this.mesh.translateOnAxis(
+          new THREE.Vector3(0, distance, 0),
+          position.y + startPosition.y
+        );
+      })
+      .onComplete(() => this.isAnimating = false)
+      .start();
+  }
+
+  // Method that smooth move the probe straight backward
+  public moveBackward(): void {
+    if (this.isAnimating) {
+      return;
+    }
+
+    const distance = .1; // distance to move the object
+    const duration = 1000; // duration of the animation in milliseconds
+    const startPosition = this.mesh.position.clone();
+    const endPosition = this.mesh.position
+      .clone()
+      .add(new THREE.Vector3(0, distance, 0));
+
+    this.moveTween = new TWEEN.Tween(startPosition)
+    .to(endPosition, duration)
+    .onUpdate(() => {
+      const position = this.mesh.position.clone();
+      this.mesh.translateOnAxis(
+        new THREE.Vector3(0, distance, 0),
+        position.y - startPosition.y
+      );
+    })
+    .onComplete(() => this.isAnimating = false)
+    .start();
+  }
+
+  // Method that smoothly rotate the probe by Z axis to the left
+  public turnLeft(): void {
+    this.moveTween = new TWEEN.Tween(this.mesh.rotation)
+      .to({ z: this.mesh.rotation.z + 0.5 }, 1000)
+      .start();
+  }
+
+  // Method that smoothly rotate the probe by Z axis to the right
+  public turnRight(): void {
+    this.moveTween = new TWEEN.Tween(this.mesh.rotation)
+      .to({ z: this.mesh.rotation.z - 0.5 }, 1000)
+      .start();
+  }
+
+  // Method that bind the keyboard keys to the probe move methods, turning methods can be used while moving forward or backward
+  public bindKeys(): void {
     document.addEventListener('keydown', (event) => {
-      const moveTime = 200;
-      if (!this.moveTween) {
-        // start a new moveTween animation based on the key input
-        switch (event.code) {
-          case 'ArrowUp':
-            this.moveTween = new TWEEN.Tween(this.mesh.position)
-              .to({ z: this.mesh.position.z - this.speed }, moveTime)
-              .onComplete(() => (this.moveTween = null))
-              .start();
-            break;
-          case 'ArrowDown':
-            this.moveTween = new TWEEN.Tween(this.mesh.position)
-              .to({ z: this.mesh.position.z + this.speed }, moveTime)
-              .onComplete(() => (this.moveTween = null))
-              .start();
-            break;
-          case 'ArrowLeft':
-            this.moveTween = new TWEEN.Tween(this.mesh.position)
-              .to({ x: this.mesh.position.x - this.speed }, moveTime)
-              .onComplete(() => (this.moveTween = null))
-              .start();
-            break;
-          case 'ArrowRight':
-            this.moveTween = new TWEEN.Tween(this.mesh.position)
-              .to({ x: this.mesh.position.x + this.speed }, moveTime)
-              .onComplete(() => (this.moveTween = null))
-              .start();
-            break;
-        }
+      console.log(event.code)
+      if (event.code === 'ArrowUp') {
+        this.moveForward();
+      } else if (event.code === 'ArrowDown') {
+        this.moveBackward();
+      } else if (event.code === 'ArrowLeft') {
+        this.turnLeft();
+      } else if (event.code === 'ArrowRight') {
+        this.turnRight();
       }
     });
   }
