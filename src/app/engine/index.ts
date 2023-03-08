@@ -9,6 +9,7 @@ import { EngineScenes } from "./scenes";
 import { DefaultSurface } from "./surroundings/surface.surrounding";
 import { EndingSurroundings } from "./surroundings";
 import { EngineUnits } from "./units";
+import * as TWEEN from '@tweenjs/tween.js';
 import { ProbeUnit } from "./units/probe.unit";
 
 export interface GameConfig {
@@ -27,7 +28,7 @@ export class SomeGameEngine {
   private _camera!: DefaultCamera;
   private _renderer!: THREE.WebGLRenderer;
   private _world: GameWorld = {};
-  private _theProbe: ProbeUnit = new EngineUnits.ProbeUnit();
+  private _probe: ProbeUnit = new EngineUnits.ProbeUnit();
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -46,7 +47,7 @@ export class SomeGameEngine {
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
 
     this._scene.addItemsToScene([
-      this._theProbe.mesh,
+      this._probe.mesh,
       this._world.surface.mesh,
       directionalLight,
       light,
@@ -57,7 +58,8 @@ export class SomeGameEngine {
 
   private animate(): void {
     requestAnimationFrame(this._animate);
-    this._theProbe.update();
+    TWEEN.update();
+    this._probe.animate();
     this._renderer.render(this._scene, this._camera);
   }
 
