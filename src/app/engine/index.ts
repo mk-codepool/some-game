@@ -11,6 +11,7 @@ import { EndingSurroundings } from "./surroundings";
 import { EngineUnits } from "./units";
 import * as TWEEN from '@tweenjs/tween.js';
 import { ProbeUnit } from "./units/probe.unit";
+import { EngineController } from "./controller";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -28,11 +29,14 @@ export class SomeGameEngine {
   private _camera!: DefaultCamera;
   private _renderer!: THREE.WebGLRenderer;
   private _world: GameWorld = {};
+  private _controller!: EngineController;
   private _probe: ProbeUnit = new EngineUnits.ProbeUnit();
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
     this.setCamera(_gameConfig);
+    this.setController(_gameConfig);
+    this.setSceneObjects();
   }
 
   public render() {
@@ -69,5 +73,9 @@ export class SomeGameEngine {
 
   private setRenderer(_gameConfig: GameConfig): void {
     this._renderer = new EngineRenderer(_gameConfig);
+  }
+
+  private setController(_gameConfig: GameConfig): void {
+    this._controller = new EngineController(_gameConfig.canvasElement as HTMLCanvasElement, this._camera, this._scene);
   }
 }

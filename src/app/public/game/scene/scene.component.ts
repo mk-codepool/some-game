@@ -24,7 +24,6 @@ export class SceneComponent implements AfterViewInit {
       canvasWidth: this.canvasContainer.nativeElement.clientWidth
     });
 
-    this.someGameEngine.setSceneObjects();
     this.someGameEngine.render();
   }
 }

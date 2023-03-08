@@ -78,31 +78,17 @@ export class ProbeUnit {
 
   private updateRotation() {
     let angle = 0;
+    const rotation = new THREE.Quaternion();
   
     if (this.pressedKeys[37]) angle += 0.1; // strzałka w lewo
     if (this.pressedKeys[39]) angle -= 0.1; // strzałka w prawo
-  
-    // Tworzenie nowego kwaternionu reprezentującego obrot o podany kąt wokół osi Z
-    let rotationQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-  
-    // Mnożenie aktualnego kwaternionu obrotu przez nowy kwaternion reprezentujący obrot o podany kąt
-    this.currentRotation.multiply(rotationQuaternion);
-  
-    // Animacja obrotu obiektu
-    if (this.rotateTween) this.rotateTween.stop();
-    this.rotateTween = new TWEEN.Tween(this.currentRotation)
-      .to(this.mesh.quaternion.clone(), 200) // krótszy czas trwania animacji
-      .easing(TWEEN.Easing.Linear.None) // jednostajna funkcja wygładzania
-      .onUpdate(() => {
-        // Aktualizacja kwaternionu obrotu meshu na bieżąco podczas animacji
-        this.mesh.setRotationFromQuaternion(this.currentRotation);
-      })
-      .start();
+    
+    rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+    this.mesh.rotation.setFromQuaternion(rotation.multiply(this.mesh.quaternion));
   }  
 
   private onKeyDown(event: { keyCode: string | number; }) {
     this.pressedKeys[event.keyCode] = true;
-    console.log(this.pressedKeys)
     this.updatePosition();
   }
   
