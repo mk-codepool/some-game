@@ -12,6 +12,7 @@ import { EngineUnits } from "./units";
 import * as TWEEN from '@tweenjs/tween.js';
 import { ProbeUnit } from "./units/probe.unit";
 import { EngineController } from "./controller";
+import { PressedKeys } from "./controller/keyboard.controller";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -30,7 +31,7 @@ export class SomeGameEngine {
   private _renderer!: THREE.WebGLRenderer;
   private _world: GameWorld = {};
   private _controller!: EngineController;
-  private _probe: ProbeUnit = new EngineUnits.ProbeUnit();
+  private _probe!: ProbeUnit;
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -49,6 +50,7 @@ export class SomeGameEngine {
     const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 10, z: 10 }});
     const sky = new EngineShapes.DomeShape();
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
+    this._probe = new EngineUnits.ProbeUnit({ engineController: this._controller });
 
     this._scene.addItemsToScene([
       this._probe.mesh,
@@ -63,7 +65,7 @@ export class SomeGameEngine {
   private animate(): void {
     requestAnimationFrame(this._animate);
     TWEEN.update();
-    this._probe.animate();
+    this._probe.animate()
     this._renderer.render(this._scene, this._camera);
   }
 

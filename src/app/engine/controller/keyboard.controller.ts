@@ -1,5 +1,9 @@
+export interface PressedKeys {
+  [key: string]: boolean;
+}
+
 export class KeyboardController {
-  private _pressedKeys: { [key: string]: boolean } = {};
+  public pressedKeys: PressedKeys = {};
 
   constructor() {
     this.bindKeys();
@@ -11,14 +15,20 @@ export class KeyboardController {
   }
 
   public isKeyPressed(key: string): boolean {
-    return this._pressedKeys[key];
+    return this.pressedKeys[key];
+  }
+
+  public keyPressed(cb: Function): void {
+    if (Object.keys(this.pressedKeys).length > 0) {
+      cb(this.pressedKeys);
+    }
   }
 
   private onKeyDown(event: KeyboardEvent): void {
-    this._pressedKeys[event.key] = true;
+    this.pressedKeys[event.key] = true;
   }
 
   private onKeyUp(event: KeyboardEvent): void {
-    delete this._pressedKeys[event.key];
+    delete this.pressedKeys[event.key];
   }
 }

@@ -1,27 +1,26 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import { EngineController } from '../controller';
+import { PressedKeys } from '../controller/keyboard.controller';
 
-// Create unit tests for this class
 export class ProbeUnit {
   public mesh!: THREE.Mesh;
+  public engineController!: EngineController;
   private moveTween:
     | TWEEN.Tween<THREE.Euler>
     | TWEEN.Tween<THREE.Vector3>
     | null = null;
-  private rotateTween: TWEEN.Tween<THREE.Quaternion> | null = null;
-  private isAnimating: boolean = false;
-  private pressedKeys: { [key: string]: boolean } = {};
-  private currentRotation!: THREE.Quaternion;
+  private currentRotation: THREE.Quaternion = new THREE.Quaternion();
 
 
-  constructor() {
+  constructor({ engineController }: { engineController: EngineController}) {
     this.setMesh();
+    this.engineController = engineController;
   }
 
   private setMesh(): void {
     const geometry = this.getProbeGeometry();
     const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-    // add axes helper
     const axesHelper = new THREE.AxesHelper(5);
 
     this.mesh = new THREE.Mesh(geometry, material);
@@ -31,68 +30,48 @@ export class ProbeUnit {
     this.mesh.castShadow = true;
     this.mesh.add(axesHelper);
     this.currentRotation = this.mesh.quaternion.clone();
-
-    this.bindKeys();
   }
 
-  // Method that returns only the probe geometry of cone shape
   public getProbeGeometry(): THREE.ConeGeometry {
     const coneGeometry = new THREE.ConeGeometry(0.1, 0.5, 32);
 
     return coneGeometry;
   }
 
-  // Method that bind the keyboard keys to the probe move methods, turning methods can be used while moving forward or backward
-  public bindKeys(): void {
-    document.addEventListener('keydown', event => this.onKeyDown(event), false);
-    document.addEventListener('keyup', event => this.onKeyUp(event), false);
-  }
-
   public animate(): void {
-    this.updatePosition();
-    this.updateRotation();
+    this.engineController.keyboardController.keyPressed((pressedKeys: PressedKeys) => {
+      this.updatePosition(pressedKeys);
+      this.updateRotation(pressedKeys);
+    });
   }
 
-  private updatePosition() {
+  private updatePosition(pressedKeys: PressedKeys) {
     let direction = new THREE.Vector3();
   
-    if (this.pressedKeys[38]) {
-      direction.y += 1; // strzałka w górę
+    if (pressedKeys['ArrowUp']) {
+      direction.y += 1;
       direction.normalize().multiplyScalar(0.6);
-    } else if (this.pressedKeys[40]) {
-      direction.y -= 1; // strzałka w dół
+    } else if (pressedKeys['ArrowDown']) {
+      direction.y -= 1;
       direction.normalize().multiplyScalar(0.3);
     }
   
-  
-    // Aktualizacja pozycji obiektu według jego osi
     let newPosition = this.mesh.position.clone().add(direction.applyQuaternion(this.mesh.quaternion));
   
-    // Animacja ruchu obiektu
     if (this.moveTween) this.moveTween.stop();
     this.moveTween = new TWEEN.Tween(this.mesh.position)
-      .to(newPosition, 200) // krótszy czas trwania animacji
-      .easing(TWEEN.Easing.Linear.None) // jednostajna funkcja wygładzania
+      .to(newPosition, 200)
+      .easing(TWEEN.Easing.Linear.None)
       .start();
   }
 
-  private updateRotation() {
+  private updateRotation(pressedKeys: PressedKeys) {
     let angle = 0;
-    const rotation = new THREE.Quaternion();
   
-    if (this.pressedKeys[37]) angle += 0.1; // strzałka w lewo
-    if (this.pressedKeys[39]) angle -= 0.1; // strzałka w prawo
+    if (pressedKeys['ArrowLeft']) angle += 0.1;
+    if (pressedKeys['ArrowRight']) angle -= 0.1;
     
-    rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
-    this.mesh.rotation.setFromQuaternion(rotation.multiply(this.mesh.quaternion));
-  }  
-
-  private onKeyDown(event: { keyCode: string | number; }) {
-    this.pressedKeys[event.keyCode] = true;
-    this.updatePosition();
-  }
-  
-  private onKeyUp(event: { keyCode: string | number; }) {
-    this.pressedKeys[event.keyCode] = false;
+    this.currentRotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+    this.mesh.rotation.setFromQuaternion(this.currentRotation.multiply(this.mesh.quaternion));
   }
 }
