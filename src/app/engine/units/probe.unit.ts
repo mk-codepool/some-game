@@ -49,7 +49,6 @@ export class ProbeUnit {
   }
 
   private updatePosition(pressedKeys: PressedKeys) {
-    console.log('updatePosition')
     let direction = new THREE.Vector3();
   
     if (pressedKeys['ArrowUp']) {

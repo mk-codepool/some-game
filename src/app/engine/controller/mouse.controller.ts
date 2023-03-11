@@ -20,7 +20,9 @@ export class MouseController {
 
   public setConfig(mouseControllerConfig: MouseControllerConfig): void {
     this._canvas = mouseControllerConfig.canvas;
-    this._canvas.addEventListener('wheel', event => this._wheelDelta = event.deltaY, false);
+    this._canvas.addEventListener('wheel', (event: WheelEvent) => {
+      this.wheelDelta = event.deltaY;
+    }, false);
   }
 
   public bindEvents(): void {
@@ -68,5 +70,10 @@ export class MouseController {
   
   public get wheelDelta(): number {
     return this._wheelDelta;
+  }
+
+  private set wheelDelta(wheelDelta: number) {
+    this._wheelDelta = wheelDelta;
+    setTimeout(() => this._wheelDelta = 0, 100);
   }
 }

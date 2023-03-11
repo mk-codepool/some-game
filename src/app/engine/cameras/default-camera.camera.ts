@@ -9,6 +9,10 @@ interface IDefaultCamera {
   width: number;
 }
 
+interface IDefaultCameraConfig {
+  controller: EngineController;
+}
+
 export class DefaultCamera extends OrthographicCamera {
   private _initRotation!: THREE.Euler;
   private _lookAtVector: Axes = { x: 0, y: 0, z: 0 };
@@ -42,8 +46,8 @@ export class DefaultCamera extends OrthographicCamera {
     }
   }
 
-  public set engineController(engineController: EngineController) {
-    this._engineController = engineController;
+  public setConfig({ controller }: IDefaultCameraConfig): void {
+    this._engineController = controller;
   }
 
   private get lookAtVector(): THREE.Vector3 {
@@ -56,36 +60,39 @@ export class DefaultCamera extends OrthographicCamera {
 
   private move(pressedKeys: PressedKeys) {
     const moveFactor: number = 0.1;
-    
-    switch (true) {
-      case pressedKeys['w']: // W
-        this.position.z -= moveFactor;
-        this.position.x -= moveFactor;
-        this._lookAtVector.z -= moveFactor
-        this._lookAtVector.x -= moveFactor
-        break;
-      case pressedKeys['s']: // S
-        this.position.z += moveFactor;
-        this.position.x += moveFactor;
-        this._lookAtVector.z += moveFactor;
-        this._lookAtVector.x += moveFactor;
-        break;                                                                                 
-      case pressedKeys['a']: // A
-        this.position.x -= moveFactor;
-        this.position.z += moveFactor;
-        this._lookAtVector.x -= moveFactor;
-        this._lookAtVector.z += moveFactor;
-        break;
-      case pressedKeys['d']: // D
-        this.position.x += moveFactor;
-        this.position.z -= moveFactor;
-        this._lookAtVector.x += moveFactor;
-        this._lookAtVector.z -= moveFactor;
-        break;
+    console.log(pressedKeys)
+
+    if(pressedKeys['w']) {
+      this.position.z -= moveFactor;
+      this.position.x -= moveFactor;
+      this._lookAtVector.z -= moveFactor
+      this._lookAtVector.x -= moveFactor
+    }
+
+    if(pressedKeys['s']) {
+      this.position.z += moveFactor;
+      this.position.x += moveFactor;
+      this._lookAtVector.z += moveFactor;
+      this._lookAtVector.x += moveFactor;
+    }
+
+    if(pressedKeys['a']) {
+      this.position.x -= moveFactor;
+      this.position.z += moveFactor;
+      this._lookAtVector.x -= moveFactor;
+      this._lookAtVector.z += moveFactor;
+    }
+
+    if(pressedKeys['d']) {
+      this.position.x += moveFactor;
+      this.position.z -= moveFactor;
+      this._lookAtVector.x += moveFactor;
+      this._lookAtVector.z -= moveFactor;
     }
   }
 
   private onWheel(mouseWheelDelta: number): void {
+    console.log(mouseWheelDelta)
     if (mouseWheelDelta < 0 && this.position.y < 30) {
       this.position.y += 1;
     } else if (mouseWheelDelta > 0 && this.position.y > 6) {

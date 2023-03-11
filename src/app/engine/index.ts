@@ -51,7 +51,7 @@ export class SomeGameEngine {
     const sky = new EngineShapes.DomeShape();
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
     this._probe = new EngineUnits.ProbeUnit({ engineController: this._controller });
-    this._camera.engineController = this._controller;
+    this._camera.setConfig({ controller: this._controller });
     this._controller.mouseController.setConfig({ canvas: this._renderer.domElement });
 
     this._scene.addItemsToScene([
