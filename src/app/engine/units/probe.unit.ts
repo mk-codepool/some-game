@@ -3,9 +3,13 @@ import * as TWEEN from '@tweenjs/tween.js';
 import { EngineController } from '../controller';
 import { PressedKeys } from '../controller/keyboard.controller';
 
+export interface IProbeUnit {
+  engineController: EngineController;
+}
+
 export class ProbeUnit {
   public mesh!: THREE.Mesh;
-  public engineController!: EngineController;
+  private _engineController!: EngineController;
   private moveTween:
     | TWEEN.Tween<THREE.Euler>
     | TWEEN.Tween<THREE.Vector3>
@@ -13,9 +17,9 @@ export class ProbeUnit {
   private currentRotation: THREE.Quaternion = new THREE.Quaternion();
 
 
-  constructor({ engineController }: { engineController: EngineController}) {
+  constructor({ engineController }: IProbeUnit) {
     this.setMesh();
-    this.engineController = engineController;
+    this._engineController = engineController;
   }
 
   private setMesh(): void {
@@ -25,7 +29,6 @@ export class ProbeUnit {
 
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.position.set(0, 2, 0);
-    this.mesh.rotateX(Math.PI / 2);
     this.mesh.receiveShadow = true;
     this.mesh.castShadow = true;
     this.mesh.add(axesHelper);
@@ -38,21 +41,22 @@ export class ProbeUnit {
     return coneGeometry;
   }
 
-  public animate(): void {
-    this.engineController.keyboardController.keyPressed((pressedKeys: PressedKeys) => {
-      this.updatePosition(pressedKeys);
-      this.updateRotation(pressedKeys);
-    });
+  public updateByAnimation(): void {
+    if(this._engineController.keyboardController.areAnyKeysPressed) {
+      this.updatePosition(this._engineController.keyboardController.pressedKeys);
+      this.updateRotation(this._engineController.keyboardController.pressedKeys);
+    }
   }
 
   private updatePosition(pressedKeys: PressedKeys) {
+    console.log('updatePosition')
     let direction = new THREE.Vector3();
   
     if (pressedKeys['ArrowUp']) {
-      direction.y += 1;
+      direction.z += 1;
       direction.normalize().multiplyScalar(0.6);
     } else if (pressedKeys['ArrowDown']) {
-      direction.y -= 1;
+      direction.z -= 1;
       direction.normalize().multiplyScalar(0.3);
     }
   
@@ -67,9 +71,10 @@ export class ProbeUnit {
 
   private updateRotation(pressedKeys: PressedKeys) {
     let angle = 0;
+    const rotationSpeed = .05;
   
-    if (pressedKeys['ArrowLeft']) angle += 0.1;
-    if (pressedKeys['ArrowRight']) angle -= 0.1;
+    if (pressedKeys['ArrowLeft']) angle += rotationSpeed;
+    if (pressedKeys['ArrowRight']) angle -= rotationSpeed;
     
     this.currentRotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
     this.mesh.rotation.setFromQuaternion(this.currentRotation.multiply(this.mesh.quaternion));

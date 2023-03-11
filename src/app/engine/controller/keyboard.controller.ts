@@ -3,7 +3,9 @@ export interface PressedKeys {
 }
 
 export class KeyboardController {
-  public pressedKeys: PressedKeys = {};
+  public areAnyKeysPressed: boolean = false;
+  
+  private _pressedKeys: PressedKeys = {};
 
   constructor() {
     this.bindKeys();
@@ -15,20 +17,20 @@ export class KeyboardController {
   }
 
   public isKeyPressed(key: string): boolean {
-    return this.pressedKeys[key];
+    return this._pressedKeys[key];
   }
 
-  public keyPressed(cb: Function): void {
-    if (Object.keys(this.pressedKeys).length > 0) {
-      cb(this.pressedKeys);
-    }
+  public get pressedKeys(): PressedKeys {
+    return this._pressedKeys;
   }
 
   private onKeyDown(event: KeyboardEvent): void {
-    this.pressedKeys[event.key] = true;
+    this._pressedKeys[event.key] = true;
+    this.areAnyKeysPressed = true;
   }
 
   private onKeyUp(event: KeyboardEvent): void {
-    delete this.pressedKeys[event.key];
+    delete this._pressedKeys[event.key];
+    Object.keys(this._pressedKeys).length === 0 ? this.areAnyKeysPressed = false : null;
   }
 }

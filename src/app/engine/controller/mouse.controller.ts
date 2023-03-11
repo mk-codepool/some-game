@@ -1,11 +1,16 @@
 import * as THREE from "three";
 
+interface MouseControllerConfig {
+  canvas: HTMLCanvasElement;
+}
+
 export class MouseController {
+  private _wheelDelta: number = 0;
   private _mouse: THREE.Vector2 = new THREE.Vector2();
   private _raycaster: THREE.Raycaster = new THREE.Raycaster();
-  private _canvas: HTMLCanvasElement;
-  private _camera: THREE.Camera;
-  private _scene: THREE.Scene;
+  private _canvas!: HTMLCanvasElement;
+  private _camera!: THREE.Camera;
+  private _scene!: THREE.Scene;
   private _intersects: THREE.Intersection[] = [];
   private _intersected: THREE.Intersection | null = null;
   private _onMouseDown: (event: MouseEvent) => void = this.onMouseDown.bind(this);
@@ -13,11 +18,9 @@ export class MouseController {
   private _onMouseUp: (event: MouseEvent) => void = this.onMouseUp.bind(this);
   private _onMouseOut: (event: MouseEvent) => void = this.onMouseOut.bind(this);
 
-  constructor(_canvas: HTMLCanvasElement, _camera: THREE.Camera, _scene: THREE.Scene) {
-    this._canvas = _canvas;
-    this._camera = _camera;
-    this._scene = _scene;
-    this.bindEvents();
+  public setConfig(mouseControllerConfig: MouseControllerConfig): void {
+    this._canvas = mouseControllerConfig.canvas;
+    this._canvas.addEventListener('wheel', event => this._wheelDelta = event.deltaY, false);
   }
 
   public bindEvents(): void {
@@ -61,5 +64,9 @@ export class MouseController {
     if (this._intersected) {
       this._intersected = null;
     }
+  }
+  
+  public get wheelDelta(): number {
+    return this._wheelDelta;
   }
 }

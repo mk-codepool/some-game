@@ -1,12 +1,23 @@
 import * as THREE from "three";
 import { OrthographicCamera } from "three";
+import { EngineController } from "../controller";
+import { PressedKeys } from "../controller/keyboard.controller";
 import { Axes } from "../interfaces.engine";
+
+interface IDefaultCamera {
+  height: number;
+  width: number;
+}
 
 export class DefaultCamera extends OrthographicCamera {
   private _initRotation!: THREE.Euler;
   private _lookAtVector: Axes = { x: 0, y: 0, z: 0 };
+  private _engineController!: EngineController;
 
-  constructor(height: number, width: number) {
+  constructor({
+    height,
+    width,
+  }: IDefaultCamera) {
     const cameraPovFactor: number = 1 / 128;
     super(
       -1 * width * cameraPovFactor,
@@ -19,10 +30,20 @@ export class DefaultCamera extends OrthographicCamera {
     this.position.set(15, 12, 15);
     this.lookAt(new THREE.Vector3(0, 0, 0));
     this._initRotation = this.rotation;
-    console.log('angle: ', this._initRotation)
-    
-    this.addKeyMoveController();
-    this.addWheelController();
+  }
+
+  public updateByAnimation(): void {
+    if(this._engineController.keyboardController.areAnyKeysPressed) {
+      this.move(this._engineController.keyboardController.pressedKeys);
+    }
+
+    if(this._engineController.mouseController.wheelDelta !== 0) {
+      this.onWheel(this._engineController.mouseController.wheelDelta);
+    }
+  }
+
+  public set engineController(engineController: EngineController) {
+    this._engineController = engineController;
   }
 
   private get lookAtVector(): THREE.Vector3 {
@@ -33,37 +54,29 @@ export class DefaultCamera extends OrthographicCamera {
     this._lookAtVector = axes;
   }
 
-  public addKeyMoveController(): void {
-    document.addEventListener('keydown', this.onKeyDown.bind(this), false);
-  }
-
-  public addWheelController(): void {
-    document.addEventListener('wheel', this.onWheel.bind(this), false);
-  }
-
-  private onKeyDown(event: KeyboardEvent) {
+  private move(pressedKeys: PressedKeys) {
     const moveFactor: number = 0.1;
     
-    switch (event.code) {
-      case 'KeyW': // W
+    switch (true) {
+      case pressedKeys['w']: // W
         this.position.z -= moveFactor;
         this.position.x -= moveFactor;
         this._lookAtVector.z -= moveFactor
         this._lookAtVector.x -= moveFactor
         break;
-      case 'KeyS': // S
+      case pressedKeys['s']: // S
         this.position.z += moveFactor;
         this.position.x += moveFactor;
         this._lookAtVector.z += moveFactor;
         this._lookAtVector.x += moveFactor;
-        break;
-      case 'KeyA': // A
+        break;                                                                                 
+      case pressedKeys['a']: // A
         this.position.x -= moveFactor;
         this.position.z += moveFactor;
         this._lookAtVector.x -= moveFactor;
         this._lookAtVector.z += moveFactor;
         break;
-      case 'KeyD': // D
+      case pressedKeys['d']: // D
         this.position.x += moveFactor;
         this.position.z -= moveFactor;
         this._lookAtVector.x += moveFactor;
@@ -72,10 +85,10 @@ export class DefaultCamera extends OrthographicCamera {
     }
   }
 
-  private onWheel(event: WheelEvent) {
-    if (event.deltaY < 0 && this.position.y < 30) {
+  private onWheel(mouseWheelDelta: number): void {
+    if (mouseWheelDelta < 0 && this.position.y < 30) {
       this.position.y += 1;
-    } else if (event.deltaY > 0 && this.position.y > 6) {
+    } else if (mouseWheelDelta > 0 && this.position.y > 6) {
       this.position.y -= 1;
     }
     this.lookAt(this.lookAtVector);

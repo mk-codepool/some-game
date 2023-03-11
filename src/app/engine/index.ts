@@ -51,6 +51,8 @@ export class SomeGameEngine {
     const sky = new EngineShapes.DomeShape();
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
     this._probe = new EngineUnits.ProbeUnit({ engineController: this._controller });
+    this._camera.engineController = this._controller;
+    this._controller.mouseController.setConfig({ canvas: this._renderer.domElement });
 
     this._scene.addItemsToScene([
       this._probe.mesh,
@@ -65,12 +67,16 @@ export class SomeGameEngine {
   private animate(): void {
     requestAnimationFrame(this._animate);
     TWEEN.update();
-    this._probe.animate()
+    this._probe.updateByAnimation()
+    this._camera.updateByAnimation();
     this._renderer.render(this._scene, this._camera);
   }
 
   private setCamera(_gameConfig: GameConfig): void {
-    this._camera = new EngineCameras.DefaultCamera(_gameConfig.canvasHeight, _gameConfig.canvasWidth);
+    this._camera = new EngineCameras.DefaultCamera({
+      height:_gameConfig.canvasHeight,
+      width: _gameConfig.canvasWidth,
+    });
   }
 
   private setRenderer(_gameConfig: GameConfig): void {
@@ -78,6 +84,6 @@ export class SomeGameEngine {
   }
 
   private setController(_gameConfig: GameConfig): void {
-    this._controller = new EngineController(_gameConfig.canvasElement as HTMLCanvasElement, this._camera, this._scene);
+    this._controller = new EngineController();
   }
 }
