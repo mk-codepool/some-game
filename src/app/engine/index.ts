@@ -12,7 +12,6 @@ import { EngineUnits } from "./units";
 import * as TWEEN from '@tweenjs/tween.js';
 import { ProbeUnit } from "./units/probe.unit";
 import { EngineController } from "./controller";
-import { PressedKeys } from "./controller/keyboard.controller";
 
 export interface GameConfig {
   canvasElement: HTMLElement;
@@ -32,6 +31,7 @@ export class SomeGameEngine {
   private _world: GameWorld = {};
   private _controller!: EngineController;
   private _probe!: ProbeUnit;
+  private _clock: THREE.Clock = new THREE.Clock();
 
   constructor(_gameConfig: GameConfig) {
     this.setRenderer(_gameConfig);
@@ -55,18 +55,21 @@ export class SomeGameEngine {
     this._controller.mouseController.setConfig({ canvas: this._renderer.domElement });
 
     this._scene.addItemsToScene([
-      this._probe.mesh,
+      this._probe.sceneGroup,
       this._world.surface.mesh,
       directionalLight,
       light,
       sky,
-      ambientLight,
+      ambientLight
     ]);
   }
 
   private animate(): void {
+    const deltaTime = this._clock.getDelta();
     requestAnimationFrame(this._animate);
     TWEEN.update();
+    // Calculate the velocity of the character
+    const velocity = this._probe.sceneGroup.position.clone().divideScalar(deltaTime);
     this._probe.updateByAnimation()
     this._camera.updateByAnimation();
     this._renderer.render(this._scene, this._camera);

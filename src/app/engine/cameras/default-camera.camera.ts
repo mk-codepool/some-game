@@ -60,7 +60,6 @@ export class DefaultCamera extends OrthographicCamera {
 
   private move(pressedKeys: PressedKeys) {
     const moveFactor: number = 0.1;
-    console.log(pressedKeys)
 
     if(pressedKeys['w']) {
       this.position.z -= moveFactor;
@@ -92,7 +91,6 @@ export class DefaultCamera extends OrthographicCamera {
   }
 
   private onWheel(mouseWheelDelta: number): void {
-    console.log(mouseWheelDelta)
     if (mouseWheelDelta < 0 && this.position.y < 30) {
       this.position.y += 1;
     } else if (mouseWheelDelta > 0 && this.position.y > 6) {
