@@ -36,17 +36,10 @@ export class ProbeUnit {
   private setSceneGroupEntity(): void {
     const probe = this.getProbeEntity();
     const dust = this.getDustEntity();
-    // add halo
-    const halo = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 32, 32),
-      this.shaderHaloMaterial()
-    );
-    halo.position.set(0, 1, 0);
 
     this.currentRotation = this.sceneGroup.quaternion.clone();
     this.sceneGroup.add(dust);
     this.sceneGroup.add(probe);
-    this.sceneGroup.add(halo);
   }
 
   private getProbeEntity(): THREE.Mesh {
@@ -70,13 +63,14 @@ export class ProbeUnit {
     const color = new THREE.Color();
 
     for (let i = 0; i < 20; i++) {
+      // set random position for each vertex, but y is greater than 0 and less than .2, z and x are greater than -1 and less than 1
       vertices.push(
         Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
+        Math.random() * 0.2,
         Math.random() * 2 - 1
       );
       color.setRGB(Math.random(), Math.random(), Math.random());
-      colors.push(color.r, color.g, color.b);
+      colors.push(255, 255, 255);
     }
 
     dustGeometry.setAttribute(
@@ -87,14 +81,9 @@ export class ProbeUnit {
       'color',
       new THREE.Float32BufferAttribute(colors, 3)
     );
-
-    const dustMaterial = new THREE.PointsMaterial({
-      size: 0.1,
-      vertexColors: true,
-    });
-    const dust = new THREE.Points(dustGeometry, dustMaterial);
-    dust.receiveShadow = true;
-    dust.castShadow = true;
+    
+    const material = new THREE.PointsMaterial({ color: 0xf38ba0, size: 10 });
+    const dust = new THREE.Points(dustGeometry, this.shaderHaloMaterial());
 
     return dust;
   }
@@ -102,27 +91,37 @@ export class ProbeUnit {
   private shaderHaloMaterial(): THREE.ShaderMaterial {
     const vertexShader = `
     varying vec3 vNormal;
+    
     void main() {
       vNormal = normalize( normalMatrix * normal );
       gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      gl_PointSize = 10.0;
     }
     `;
     const fragmentShader = `
     varying vec3 vNormal;
     void main() 
     {
-      float intensity = pow( 0.002 - dot( vNormal, vec3( 0.0, 0.0, 1 ) ), 6.0 ); 
-      gl_FragColor = vec4(140.0/255.0, 103.0/255.0, 83.0/255.0, 0.5) * intensity;
+      float intensity = pow( 0.002 - dot( vNormal, vec3( 0.0, 0.0, 1 ) ), 1.0 );
+      gl_FragColor = vec4(140.0/255.0, 103.0/255.0, 83.0/255.0, 1) * intensity;
     }
     `;
 
+    const shaderPoint = THREE.ShaderLib.points
+    const uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms)
+    uniforms.size.value = 60
+    uniforms.scale.value = 350
+
     const customMaterial = new THREE.ShaderMaterial({
-      uniforms: {},
+      uniforms,
+      defines: {
+          USE_MAP: "",
+          USE_SIZEATTENUATION: ""
+      },
       vertexShader,
       fragmentShader,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
+      side: THREE.DoubleSide,
+      transparent: false,
     });
 
     return customMaterial;
