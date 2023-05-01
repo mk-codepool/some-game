@@ -16,6 +16,7 @@ export class ProbeUnit {
     | TWEEN.Tween<THREE.Vector3>
     | null = null;
   private currentRotation: THREE.Quaternion = new THREE.Quaternion();
+  private _dust: THREE.Points = this.getDustEntity();
 
   constructor({ engineController }: IProbeUnit) {
     this.setSceneGroupEntity();
@@ -35,11 +36,14 @@ export class ProbeUnit {
 
   private setSceneGroupEntity(): void {
     const probe = this.getProbeEntity();
-    const dust = this.getDustEntity();
 
     this.currentRotation = this.sceneGroup.quaternion.clone();
-    this.sceneGroup.add(dust);
+    this.sceneGroup.add(this._dust);
     this.sceneGroup.add(probe);
+    
+    if (this._dust.morphTargetInfluences) {
+      console.log(this._dust.morphTargetInfluences[0])
+    }
   }
 
   private getProbeEntity(): THREE.Mesh {
@@ -52,12 +56,14 @@ export class ProbeUnit {
     mesh.receiveShadow = true;
     mesh.castShadow = true;
     mesh.add(axesHelper);
+    this.rotateMesh(mesh);
 
     return mesh;
   }
 
   private getDustEntity(): THREE.Points {
     const dustGeometry = new THREE.BufferGeometry();
+    dustGeometry.morphAttributes['position'] = [];
     const vertices = [];
     const colors = [];
     const color = new THREE.Color();
@@ -82,53 +88,17 @@ export class ProbeUnit {
       new THREE.Float32BufferAttribute(colors, 3)
     );
     
-    const material = new THREE.PointsMaterial({ color: 0xf38ba0, size: 10 });
-    const dust = new THREE.Points(dustGeometry, this.shaderHaloMaterial());
+    const map = new THREE.TextureLoader().load( '../../../assets/game-engine/textures/dust-particle/map.png' );
+    const material = new THREE.PointsMaterial( { size: 15, sizeAttenuation: false, map, alphaTest: 0.1, transparent: true } );
+    const dust = new THREE.Points(dustGeometry, material);
 
     return dust;
   }
 
-  private shaderHaloMaterial(): THREE.ShaderMaterial {
-    const vertexShader = `
-    varying vec3 vNormal;
-    
-    void main() {
-      vNormal = normalize( normalMatrix * normal );
-      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-      gl_PointSize = 10.0;
-    }
-    `;
-    const fragmentShader = `
-    varying vec3 vNormal;
-    void main() 
-    {
-      float intensity = pow( 0.002 - dot( vNormal, vec3( 0.0, 0.0, 1 ) ), 1.0 );
-      gl_FragColor = vec4(140.0/255.0, 103.0/255.0, 83.0/255.0, 1) * intensity;
-    }
-    `;
-
-    const shaderPoint = THREE.ShaderLib.points
-    const uniforms = THREE.UniformsUtils.clone(shaderPoint.uniforms)
-    uniforms.size.value = 60
-    uniforms.scale.value = 350
-
-    const customMaterial = new THREE.ShaderMaterial({
-      uniforms,
-      defines: {
-          USE_MAP: "",
-          USE_SIZEATTENUATION: ""
-      },
-      vertexShader,
-      fragmentShader,
-      side: THREE.DoubleSide,
-      transparent: false,
-    });
-
-    return customMaterial;
-  }
-
   private updatePosition(pressedKeys: PressedKeys) {
     let direction = new THREE.Vector3();
+    
+    this.updateDust();
 
     if (pressedKeys['ArrowUp']) {
       direction.z += 1;
@@ -160,5 +130,22 @@ export class ProbeUnit {
     this.sceneGroup.rotation.setFromQuaternion(
       this.currentRotation.multiply(this.sceneGroup.quaternion)
     );
+  }
+
+  private updateDust() {
+    if (this._dust.morphTargetInfluences) {
+      this._dust.morphTargetInfluences[0] = Math.random();
+    }
+  }
+
+  // rotate mesh by 90 degrees on x axis withouth changing its rotation
+  private rotateMesh(mesh: THREE.Mesh) {
+    const rotation = mesh.rotation.clone();
+    mesh.rotation.x += Math.PI / 2;
+    mesh.updateMatrix();
+    mesh.geometry.applyMatrix4(mesh.matrix);
+    mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+    mesh.matrix.identity();
+    mesh.matrixAutoUpdate = false;
   }
 }

@@ -28,10 +28,11 @@ export class BasicShapes {
 
   public static getBasicSurface(basicShapeConfig: BasicShapeConfig = { axes: AXES }): THREE.Mesh {
     // texture
-    const textureRepeatFactor = 200;
+    const textureRepeatFactor = 300;
     const textureLoader = new THREE.TextureLoader();
-    const map = textureLoader.load('../../../assets/game-engine/textures/desert-surface/color.jpg');
-    const normalMap = textureLoader.load('../../../assets/game-engine/textures/desert-surface/normals.jpg');
+    const texturePathName = 'ground-flat-rocks';
+    const map = textureLoader.load(`../../../assets/game-engine/textures/${texturePathName}/map.jpg`);
+    const normalMap = textureLoader.load(`../../../assets/game-engine/textures/${texturePathName}/normal.jpg`);
     map.wrapS = THREE.RepeatWrapping;
     map.wrapT = THREE.RepeatWrapping;
     map.repeat.set(textureRepeatFactor, textureRepeatFactor);
@@ -42,10 +43,14 @@ export class BasicShapes {
     const material = new THREE.MeshStandardMaterial({
       map,
       normalMap,
-      normalScale: new THREE.Vector2(2, 2),
+      normalScale: new THREE.Vector2(1, 15),
+      emissive: 0x66461a,
+      emissiveIntensity: 0.1,
+      metalness: 0.5,
+      roughness: 0.5,
     });
     // geometry
-    const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 100);
+    const planeGeometry = new THREE.PlaneGeometry(1000, 1000, textureRepeatFactor);
     planeGeometry.computeVertexNormals();
     // mesh
     const plane = new THREE.Mesh(planeGeometry, material);

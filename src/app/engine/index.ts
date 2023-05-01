@@ -46,8 +46,8 @@ export class SomeGameEngine {
 
   public setSceneObjects(): void {
     this._world.surface = new EndingSurroundings.DefaultSurface();
-    const directionalLight = EngineLights.BasicLights.getDirectionalLight({ axes: { x: 10, y: 10, z: 10 }});
-    const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 10, z: 10 }});
+    const directionalLight = EngineLights.BasicLights.getDirectionalLight({ axes: { x: 10, y: 20, z: 10 }});
+    const light = EngineLights.BasicLights.getPointLight({ axes: { x: 10, y: 20, z: 10 }});
     const sky = new EngineShapes.DomeShape();
     const ambientLight = EngineLights.BasicLights.getAmbientLight();
     this._probe = new EngineUnits.ProbeUnit({ engineController: this._controller });
