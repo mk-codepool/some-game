@@ -32,7 +32,7 @@ export class BasicShapes {
     const textureLoader = new THREE.TextureLoader();
     const texturePathName = 'ground-flat-rocks';
     const map = textureLoader.load(`../../../assets/game-engine/textures/${texturePathName}/map.jpg`);
-    const normalMap = textureLoader.load(`../../../assets/game-engine/textures/${texturePathName}/normal.jpg`);
+    const normalMap = textureLoader.load(`../../../assets/game-engine/textures/${texturePathName}/normal.png`);
     map.wrapS = THREE.RepeatWrapping;
     map.wrapT = THREE.RepeatWrapping;
     map.repeat.set(textureRepeatFactor, textureRepeatFactor);
@@ -43,9 +43,9 @@ export class BasicShapes {
     const material = new THREE.MeshStandardMaterial({
       map,
       normalMap,
-      normalScale: new THREE.Vector2(1, 15),
+      normalScale: new THREE.Vector2(3, 3),
       emissive: 0x66461a,
-      emissiveIntensity: 0.1,
+      emissiveIntensity: 0.5,
       metalness: 0.5,
       roughness: 0.5,
     });

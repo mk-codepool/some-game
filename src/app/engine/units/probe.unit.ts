@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import { EngineController } from '../controller';
 import { PressedKeys } from '../controller/keyboard.controller';
+const Nebula = require('three-nebula');
+const { System, Emitter, BoxZone, Rate, Span, Position, Color, Alpha, Scale, Life } = Nebula;
 
 export interface IProbeUnit {
   engineController: EngineController;
@@ -9,6 +11,7 @@ export interface IProbeUnit {
 
 export class ProbeUnit {
   public sceneGroup: THREE.Group = new THREE.Group();
+  private particleSystem: typeof System;
 
   private _engineController!: EngineController;
   private moveTween:
@@ -16,7 +19,6 @@ export class ProbeUnit {
     | TWEEN.Tween<THREE.Vector3>
     | null = null;
   private currentRotation: THREE.Quaternion = new THREE.Quaternion();
-  private _dust: THREE.Points = this.getDustEntity();
 
   constructor({ engineController }: IProbeUnit) {
     this.setSceneGroupEntity();
@@ -31,6 +33,8 @@ export class ProbeUnit {
       this.updateRotation(
         this._engineController.keyboardController.pressedKeys
       );
+      
+      this.particleSystem.update();
     }
   }
 
@@ -38,12 +42,8 @@ export class ProbeUnit {
     const probe = this.getProbeEntity();
 
     this.currentRotation = this.sceneGroup.quaternion.clone();
-    this.sceneGroup.add(this._dust);
     this.sceneGroup.add(probe);
-    
-    if (this._dust.morphTargetInfluences) {
-      console.log(this._dust.morphTargetInfluences[0])
-    }
+    this.createDustEffect();
   }
 
   private getProbeEntity(): THREE.Mesh {
@@ -61,44 +61,8 @@ export class ProbeUnit {
     return mesh;
   }
 
-  private getDustEntity(): THREE.Points {
-    const dustGeometry = new THREE.BufferGeometry();
-    dustGeometry.morphAttributes['position'] = [];
-    const vertices = [];
-    const colors = [];
-    const color = new THREE.Color();
-
-    for (let i = 0; i < 20; i++) {
-      // set random position for each vertex, but y is greater than 0 and less than .2, z and x are greater than -1 and less than 1
-      vertices.push(
-        Math.random() * 2 - 1,
-        Math.random() * 0.2,
-        Math.random() * 2 - 1
-      );
-      color.setRGB(Math.random(), Math.random(), Math.random());
-      colors.push(255, 255, 255);
-    }
-
-    dustGeometry.setAttribute(
-      'position',
-      new THREE.Float32BufferAttribute(vertices, 3)
-    );
-    dustGeometry.setAttribute(
-      'color',
-      new THREE.Float32BufferAttribute(colors, 3)
-    );
-    
-    const map = new THREE.TextureLoader().load( '../../../assets/game-engine/textures/dust-particle/map.png' );
-    const material = new THREE.PointsMaterial( { size: 15, sizeAttenuation: false, map, alphaTest: 0.1, transparent: true } );
-    const dust = new THREE.Points(dustGeometry, material);
-
-    return dust;
-  }
-
   private updatePosition(pressedKeys: PressedKeys) {
     let direction = new THREE.Vector3();
-    
-    this.updateDust();
 
     if (pressedKeys['ArrowUp']) {
       direction.z += 1;
@@ -132,12 +96,6 @@ export class ProbeUnit {
     );
   }
 
-  private updateDust() {
-    if (this._dust.morphTargetInfluences) {
-      this._dust.morphTargetInfluences[0] = Math.random();
-    }
-  }
-
   // rotate mesh by 90 degrees on x axis withouth changing its rotation
   private rotateMesh(mesh: THREE.Mesh) {
     const rotation = mesh.rotation.clone();
@@ -147,5 +105,23 @@ export class ProbeUnit {
     mesh.rotation.set(rotation.x, rotation.y, rotation.z);
     mesh.matrix.identity();
     mesh.matrixAutoUpdate = false;
+  }
+
+  private createDustEffect() {
+    this.particleSystem = new System();
+    this.sceneGroup.add(this.particleSystem.mesh);
+
+    const emitter = new Emitter()
+      .setRate(new Rate(new Span(10, 20), new Span(0.1, 0.25)))
+      .setInitializers([
+        new Position(new BoxZone(1, 1, 1)),
+        new Color(0xaaaaaa, 0xaaaaaa),
+        new Alpha(0.5, 0),
+        new Scale(0.1, 0.05),
+        new Life(1, 3),
+      ])
+      .emit();
+
+    this.particleSystem.addEmitter(emitter);
   }
 }

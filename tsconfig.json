@@ -23,7 +23,9 @@
       "ES2022",
       "dom",
       "scripthost"
-    ]
+    ],
+    "types": [ "node" ],
+    "typeRoots": [ "../node_modules/@types" ],
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
